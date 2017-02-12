@@ -71,11 +71,18 @@ func (c Application) CreateSyncableObject(objType string) revel.Result {
 	}
 	key_values_string := string(key_values_map[:])
 	
-	key := app.RAW_DEK
-    key_values_string_encrypted := hex.EncodeToString(models.Encrypt([]byte(key), []byte(key_values_string)))
-    revel.INFO.Println(key_values_string_encrypted)
-	
-	syncableObject := models.SyncableObject{models.Model{}, uuid.New(), objType, key_values_string_encrypted, 0}
+	// find the deployment
+	dbd := c.MongoSession.DB("landline").C("Deployments")
+ 	var deployment map[string]string
+ 	err = dbd.Find(bson.M{}).One(&deployment)
+
+ 	if deployment["enc_is_on"] == "True" {
+		key := app.RAW_DEK
+	    key_values_string = hex.EncodeToString(models.Encrypt([]byte(key), []byte(key_values_string)))
+	    revel.INFO.Println(key_values_string)
+	}
+
+	syncableObject := models.SyncableObject{models.Model{}, uuid.New(), objType, key_values_string, 0}
 	
 	// Save to db
 	dbc := c.MongoSession.DB("landline").C("SyncableObjects")
