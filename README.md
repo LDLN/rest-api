@@ -36,3 +36,7 @@
   2. POST to the create endpoint:
 
   `curl -X POST http://localhost:9100/types/GPS/create?rawdata=TESTParam,123,7383`
+
+<hr />
+
+Stuck on something? Check [the wiki](https://github.com/LDLN/core/wiki)!
